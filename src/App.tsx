@@ -17,6 +17,7 @@ const Conatiner = styled.main`
 
 const Wrap = styled.div`
   display: flex;
+  align-items: flex-start;
   gap: 50px;
   @media (max-width: 1250px) {
     flex-direction: column;

@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleModal } from "../counterSlice";
+import { RootState } from "../store";
 
 const SelectBox = styled.div`
   width: 100%;
@@ -25,14 +26,14 @@ const SelectBox = styled.div`
 `;
 
 interface IProps {
+  state?: string;
   setState: React.Dispatch<React.SetStateAction<string>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
-  id?: string;
 }
 
-const Select = ({ groupList, setGroupList, setState, id }: IProps) => {
+const Select = ({ state, setState }: IProps) => {
+  const groupList = useSelector((state: RootState) => state.counter.groupList);
   const dispatch = useDispatch();
+
   const modalOpen = () => {
     dispatch(toggleModal());
   };
@@ -51,7 +52,7 @@ const Select = ({ groupList, setGroupList, setState, id }: IProps) => {
       <SelectBox>
         <label htmlFor="group">그룹</label>
         <div>
-          <select value={id} id="group" onChange={onchange}>
+          <select value={state} id="group" onChange={onchange}>
             {groupList.map((value, index) => (
               <option key={index} value={value}>
                 {value}

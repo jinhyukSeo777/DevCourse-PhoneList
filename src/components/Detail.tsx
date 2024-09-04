@@ -53,31 +53,16 @@ const Save = styled.div`
 `;
 
 interface IProps {
-  modalClose: () => void;
-  content: IList;
   index: number;
-  list: IList[];
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
+  content: IList;
+  modalClose: () => void;
 }
 
-const Detail = ({
-  modalClose,
-  content,
-  index,
-  list,
-  setList,
-  groupList,
-  setGroupList,
-}: IProps) => {
+const Detail = ({ index, content, modalClose }: IProps) => {
   const [editing, setEditing] = useState(false);
 
   const editClicked = () => {
-    if (editing) {
-    } else {
-      setEditing(true);
-    }
+    setEditing(true);
   };
 
   return (
@@ -104,10 +89,6 @@ const Detail = ({
         </>
       ) : (
         <EditForm
-          list={list}
-          setList={setList}
-          groupList={groupList}
-          setGroupList={setGroupList}
           index={index}
           content={content}
           modalClose={modalClose}

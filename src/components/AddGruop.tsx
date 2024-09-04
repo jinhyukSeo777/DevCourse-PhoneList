@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Btns, Close } from "./Detail";
-import { useEffect, useState } from "react";
-import { toggleModal } from "../counterSlice";
-import { useDispatch } from "react-redux";
-import { IList } from "../App";
+import { useState } from "react";
+import { setGroupList, toggleModal } from "../counterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const Container = styled.div`
   background-color: white;
@@ -52,14 +52,10 @@ const Form = styled.form`
   }
 `;
 
-interface IProps {
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
-}
-
-const AddGruop = ({ groupList, setGroupList }: IProps) => {
+const AddGruop = () => {
   const [keyword, setKeyword] = useState("");
-  const [list, setList] = useState<IList[]>([]);
+  const list = useSelector((state: RootState) => state.counter.list);
+  const groupList = useSelector((state: RootState) => state.counter.groupList);
   const dispatch = useDispatch();
 
   const modalClose = () => {
@@ -74,29 +70,21 @@ const AddGruop = ({ groupList, setGroupList }: IProps) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newList = [...groupList, keyword];
-    setGroupList(newList);
+    dispatch(setGroupList(newList));
     localStorage.setItem("group", JSON.stringify(newList));
     setKeyword("");
   };
-
-  useEffect(() => {
-    const itemString = localStorage.getItem("list");
-    if (itemString) {
-      const item = JSON.parse(itemString);
-      setList(item);
-    }
-  }, []);
 
   const deleteGroup = (index: number) => {
     const newList = [
       ...groupList.slice(0, index),
       ...groupList.slice(index + 1),
     ];
-    setGroupList(newList);
+    dispatch(setGroupList(newList));
     localStorage.setItem("group", JSON.stringify(newList));
   };
 
-  const groupUsed = (value: string) => {
+  const groupUsing = (value: string) => {
     const isUsed = list.some((v) => v.group === value);
     return isUsed;
   };
@@ -109,7 +97,7 @@ const AddGruop = ({ groupList, setGroupList }: IProps) => {
           <GroupItem key={index}>
             <span>{value}</span>
             <button
-              disabled={groupUsed(value)}
+              disabled={groupUsing(value)}
               onClick={() => deleteGroup(index)}
             >
               x

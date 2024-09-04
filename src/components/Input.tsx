@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { styled } from "styled-components";
-import { IList } from "../App";
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -32,11 +33,11 @@ interface IProps {
   state: string;
   setState: React.Dispatch<React.SetStateAction<string>>;
   setIsValid: React.Dispatch<React.SetStateAction<boolean>>;
-  list: IList[];
 }
 
-const Input = ({ content, id, state, setState, setIsValid, list }: IProps) => {
+const Input = ({ content, id, state, setState, setIsValid }: IProps) => {
   const [error, setError] = useState("");
+  const list = useSelector((state: RootState) => state.counter.list);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();

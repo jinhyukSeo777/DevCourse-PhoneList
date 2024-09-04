@@ -2,8 +2,10 @@ import { styled } from "styled-components";
 import { mainColor } from "../color";
 import Input from "./Input";
 import Select from "./Select";
-import { useState } from "react";
-import { IList } from "../App";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setList } from "../counterSlice";
+import { RootState } from "../store";
 
 const Form = styled.form`
   padding: 1.5rem;
@@ -23,19 +25,20 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-interface IProps {
-  list: IList[];
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
-}
+const EnrollForm = () => {
+  const list = useSelector((state: RootState) => state.counter.list);
+  const groupList = useSelector((state: RootState) => state.counter.groupList);
+  const dispatch = useDispatch();
 
-const EnrollForm = ({ list, setList, groupList, setGroupList }: IProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [group, setGroup] = useState("가족");
+  const [group, setGroup] = useState("");
   const [memo, setMemo] = useState("");
   const [isValid, setIsValid] = useState(true);
+
+  useEffect(() => {
+    setGroup(groupList[0]);
+  }, [groupList]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,10 +53,11 @@ const EnrollForm = ({ list, setList, groupList, setGroupList }: IProps) => {
       memo,
     };
     const newList = [...list, obj];
-    setList(newList);
+    dispatch(setList(newList));
     localStorage.setItem("list", JSON.stringify(newList));
     setName("");
     setPhone("");
+    setGroup(groupList[0]);
     setMemo("");
   };
 
@@ -65,7 +69,6 @@ const EnrollForm = ({ list, setList, groupList, setGroupList }: IProps) => {
         state={name}
         setState={setName}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
       <Input
         content="전화번호"
@@ -73,20 +76,14 @@ const EnrollForm = ({ list, setList, groupList, setGroupList }: IProps) => {
         state={phone}
         setState={setPhone}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
-      <Select
-        groupList={groupList}
-        setGroupList={setGroupList}
-        setState={setGroup}
-      ></Select>
+      <Select state={group} setState={setGroup}></Select>
       <Input
         content="간단한기록"
         id="memo"
         state={memo}
         setState={setMemo}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
       <Button>저장</Button>
     </Form>

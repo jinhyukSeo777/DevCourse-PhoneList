@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { mainColor } from "../color";
 import { useState } from "react";
 import { IList } from "../App";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const Form = styled.form`
   display: flex;
@@ -34,25 +36,22 @@ const Button = styled.div`
 `;
 
 interface IProps {
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
+  setResult: React.Dispatch<React.SetStateAction<IList[]>>;
 }
 
-const Search = ({ setList }: IProps) => {
+const Search = ({ setResult }: IProps) => {
   const [keyword, setKeyword] = useState("");
+  const list = useSelector((state: RootState) => state.counter.list);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const itemString = localStorage.getItem("list");
-    if (itemString) {
-      const item: IList[] = JSON.parse(itemString);
-      const newList = item.filter(
-        (value) =>
-          value.name.includes(keyword) ||
-          value.phone.includes(keyword) ||
-          value.group.includes(keyword)
-      );
-      setList(newList);
-    }
+    const newList = list.filter(
+      (value) =>
+        value.name.includes(keyword) ||
+        value.phone.includes(keyword) ||
+        value.group.includes(keyword)
+    );
+    setResult(newList);
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,11 +60,7 @@ const Search = ({ setList }: IProps) => {
   };
 
   const showAll = () => {
-    const itemString = localStorage.getItem("list");
-    if (itemString) {
-      const item = JSON.parse(itemString);
-      setList(item);
-    }
+    setResult(list);
   };
 
   return (

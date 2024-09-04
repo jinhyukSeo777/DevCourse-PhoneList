@@ -30,25 +30,15 @@ interface IProps {
   index: number;
   content: IList;
   deleteList: (index: number) => void;
-  list: IList[];
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const Item = ({
-  index,
-  content,
-  deleteList,
-  list,
-  setList,
-  groupList,
-  setGroupList,
-}: IProps) => {
+const Item = ({ index, content, deleteList }: IProps) => {
   const [modalShow, setModalShow] = useState(false);
+
   const modalOpen = () => {
     setModalShow(true);
   };
+
   const modalClose = () => {
     setModalShow(false);
   };
@@ -72,10 +62,6 @@ const Item = ({
             modalClose={modalClose}
             index={index}
             content={content}
-            list={list}
-            setList={setList}
-            groupList={groupList}
-            setGroupList={setGroupList}
           ></Detail>
         </Modal>
       )}

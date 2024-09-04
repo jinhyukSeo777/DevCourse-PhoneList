@@ -4,6 +4,9 @@ import Input from "./Input";
 import Select from "./Select";
 import { useState } from "react";
 import { IList } from "../App";
+import { useDispatch, useSelector } from "react-redux";
+import { setList } from "../counterSlice";
+import { RootState } from "../store";
 
 const Form = styled.form`
   padding: 1.5rem;
@@ -23,44 +26,34 @@ const Button = styled.button`
 `;
 
 interface IProps {
-  list: IList[];
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
   index: number;
   content: IList;
   modalClose: () => void;
 }
 
-const EditForm = ({
-  list,
-  setList,
-  groupList,
-  setGroupList,
-  index,
-  content,
-  modalClose,
-}: IProps) => {
+const EditForm = ({ index, content, modalClose }: IProps) => {
   const [name, setName] = useState(content.name);
   const [phone, setPhone] = useState(content.phone);
   const [group, setGroup] = useState(content.group);
   const [memo, setMemo] = useState(content.memo);
   const [isValid, setIsValid] = useState(true);
+  const list = useSelector((state: RootState) => state.counter.list);
+  const dispatch = useDispatch();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name || !phone || !isValid) {
       return;
     }
+
     const obj = {
       name,
       phone,
       group,
       memo,
     };
-
     const newList = [...list.slice(0, index), obj, ...list.slice(index + 1)];
-    setList(newList);
+    dispatch(setList(newList));
     localStorage.setItem("list", JSON.stringify(newList));
     setName("");
     setPhone("");
@@ -76,7 +69,6 @@ const EditForm = ({
         state={name}
         setState={setName}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
       <Input
         content="전화번호"
@@ -84,21 +76,14 @@ const EditForm = ({
         state={phone}
         setState={setPhone}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
-      <Select
-        groupList={groupList}
-        setGroupList={setGroupList}
-        setState={setGroup}
-        id={content.group}
-      ></Select>
+      <Select state={group} setState={setGroup}></Select>
       <Input
         content="간단한기록"
         id="memo"
         state={memo}
         setState={setMemo}
         setIsValid={setIsValid}
-        list={list}
       ></Input>
       <Button>저장</Button>
     </Form>

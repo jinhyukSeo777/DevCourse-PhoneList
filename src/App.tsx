@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import EnrollForm from "./components/EnrollForm";
 import ShowList from "./components/ShowList";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import Modal from "./components/Modal";
 import AddGruop from "./components/AddGruop";
+import { setGroupList, setList } from "./counterSlice";
 
 const Conatiner = styled.main`
   display: flex;
@@ -30,25 +31,19 @@ export interface IList {
 }
 
 function App() {
-  const [list, setList] = useState<IList[]>([]);
-  const [groupList, setGroupList] = useState<string[]>([
-    "가족",
-    "친구",
-    "직장",
-    "스터디",
-  ]);
   const modalShow = useSelector((state: RootState) => state.counter.showModal);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const itemString = localStorage.getItem("list");
     if (itemString) {
       const item = JSON.parse(itemString);
-      setList(item);
+      dispatch(setList(item));
     }
     const groupString = localStorage.getItem("group");
     if (groupString) {
       const item = JSON.parse(groupString);
-      setGroupList(item);
+      dispatch(setGroupList(item));
     }
   }, []);
 
@@ -56,25 +51,12 @@ function App() {
     <Conatiner>
       <h1>연락처 리스트</h1>
       <Wrap>
-        <EnrollForm
-          list={list}
-          setList={setList}
-          groupList={groupList}
-          setGroupList={setGroupList}
-        ></EnrollForm>
-        <ShowList
-          list={list}
-          setList={setList}
-          groupList={groupList}
-          setGroupList={setGroupList}
-        ></ShowList>
+        <EnrollForm></EnrollForm>
+        <ShowList></ShowList>
       </Wrap>
       {modalShow && (
         <Modal>
-          <AddGruop
-            groupList={groupList}
-            setGroupList={setGroupList}
-          ></AddGruop>
+          <AddGruop></AddGruop>
         </Modal>
       )}
     </Conatiner>

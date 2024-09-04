@@ -2,6 +2,10 @@ import styled from "styled-components";
 import { IList } from "../App";
 import Item from "./Item";
 import Search from "./Search";
+import { setList } from "../counterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -14,34 +18,31 @@ const ItemList = styled.ul`
   padding: 0;
 `;
 
-interface IProps {
-  list: IList[];
-  setList: React.Dispatch<React.SetStateAction<IList[]>>;
-  groupList: string[];
-  setGroupList: React.Dispatch<React.SetStateAction<string[]>>;
-}
+const ShowList = () => {
+  const list = useSelector((state: RootState) => state.counter.list);
+  const dispatch = useDispatch();
+  const [result, setResult] = useState<IList[]>([]);
 
-const ShowList = ({ list, setList, groupList, setGroupList }: IProps) => {
+  useEffect(() => {
+    setResult(list);
+  }, [list]);
+
   const deleteList = (index: number) => {
     const newList = [...list.slice(0, index), ...list.slice(index + 1)];
-    setList(newList);
+    dispatch(setList(newList));
     localStorage.setItem("list", JSON.stringify(newList));
   };
 
   return (
     <Container>
-      <Search setList={setList}></Search>
+      <Search setResult={setResult}></Search>
       <ItemList>
-        {list.map((value, index) => (
+        {result.map((value, index) => (
           <Item
             key={index}
             index={index}
             content={value}
             deleteList={deleteList}
-            list={list}
-            setList={setList}
-            groupList={groupList}
-            setGroupList={setGroupList}
           ></Item>
         ))}
       </ItemList>
